@@ -4,6 +4,8 @@ This is the Spring 2017, Harvard Statistics 149: Generalized Linear Models predi
 
 The goal of this project is to use the modeling methods in Statistics 149 (and possibly other related methods) to analyze a data set on whether a Colorado voting-eligible citizen ended up actually voting in the 2016 US election. These data were kindly provided by [moveon.org](https://front.moveon.org/). The competition can be found [here](inclass.kaggle.com/c/who-voted) and ended April 30, 2017, at 10pm EDT.
 
+## Exploration of voter dataset
+
 Below we list the predictor variables and our findings regarding each from the [initial exploration](who-voted_EDA.ipynb) of the data:
 
 1. **voted:** This is the (binary) response variable and denotes whether an individual did (Y) or did not (N) vote. ~67.8% of individuals did vote (80,357) compared to ~32.2% who did not vote (38,172). This class imbalance is important to keep in mind for model fitting, as certain models do not handle imbalanced classes well.
@@ -70,7 +72,7 @@ To investigate the relationship between the likelihood of voting and our categor
 
 The ratio of those who did and did not vote in each category of our categorical variables are generally between 3:1 and 2:1. For example, ~72% of women and ~64% of men voted in Colorado in 2016, thus the likelihood of an individual voting given their gender alone is similar. There are too many state house districts to plot each individually, but there are some state house districts where the proportion of citizens who did and did not vote differed (see below):
 
-![alt text](images/fig1.png)
+![alt text](images/figure_state_house.png)
 
 We next explored the [predictor variables](who-voted_features.ipynb) that could potentially be useful for predicting voter turnout by training a naive random forest classifier with observations containing no missing values and examining which features the classifier used to split the data.
 
@@ -95,7 +97,34 @@ evang              |  1e-05
 
 Based on these results, it seemed distance from ballot drop off location and polling place had good predictive power, and we therefore attempted multiple imputation by chained equations ([MICE](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3074241/)) [here](who-voted_impute.ipynb), though as already noted in our final model simply removing these variables resulted in better predictions than the imputed data. Removing the least important features in the table above did not result in an improved cross-validation log-loss score by the naive random forest.
 
-We next fit a variety of classifiers in [this notebook](who-voted_modeling.ipynb) to predict voter turnout. 
+## Predicting the likelihood of voting
+
+To predict voter turnout, we next fit a variety of classifiers in [this notebook](who-voted_modeling.ipynb). Our initial models were logistic regression with L2 regularization and random forests with different tuned hyperparameters, followed by gradient boosted trees, which led to the largest drop in log-loss. To get a sense of what kind of predictions each fitted model was making, we can plot the distribution of the predicted probabilities of the different random forests, logistic regression and boosted tree models.
+
+![alt text](distributions.png)
+
+Although the predictions of all four models are similar overall, there are probability ranges where the models perform differently. For example, logistic regression makes the most extreme predictions, likely contributing to its poor performance. To overcome the weaknesses of any individual model, ensemble models, where the final prediction is a weighted average or vote of each classifier, and stacking, which takes the probability predictions from individually tuned models and using these probabilities as a training set for a meta-classifier to produce final predictions, can be tested. Of the two methods, stacking led to the best final predictions on this dataset. I finished 5th out of 40 teams (100 students total).
+
+We can see competition progress on both the public and private leaderboards below:
+
+![alt text](images/competition-progress.png)
+
+The largest drop in log-loss was when we moved from a random forest to a gradient boosted tree model implemented via gradient boosted tree (submission 1 vs. submission 3). Further tuning of the gradient boosted tree model led to a significant decrease in both private and public log-loss scores (submissions 4-6). In submissions 7 and 10 we tested ensemble and stacked models, which led to modest improvements relative to gradient boosted tree alone. In the final two submissions, the decrease in log-loss was greater for the public score than the private score, suggesting that overfitting to the public leaderboard data may have started to occur.
+
+## Evaluation of approach
+
+* With such a large proportion of missing data in the dist_ballot and dist_poll variables, it would have been better to simply remove them from the dataset than to attempt imputation
+* Imputation may have been better for the uncoded/unknown categories in race and gender, as a much smaller proportion of these variables were missing
+* Fitting a generalized additive model (GAM) would have been a superior approach compared to logistic regression, as the former could have captured complex non-linear relationships in the voter data
+
+## Who turns out to vote and who stays in on election day?
+### Model interpretation
+
+Ultimately the goal of this project is to predict, and potentially understand, whether a Colorado voter participated in the 2016 election. An important first step in achieving this goal is to decide on a probability threshold above which an observation will be scored as a positive case (will vote) and below which will be scored as a negative case (will not vote). Generally, domain knowledge and constraints need to be employed to determine the ideal threshold. For example, if the goal is to encourage as many voters as possible to participate in an election, then setting a higher threshold so that more people are classified as unlikely to vote may be appropriate, as these people can then be targeted for get-out-the-vote campaigns. On the other hand, in the real world there are always budget constraints, and therefore setting a lower threshold to target the individuals most ‘at risk’ of not voting may be a better use of limited resources. Plotting the true positive rate (TPR) vs. the false positive rate (FPR) on the test set to generate an ROC curve can help determine a threshold to optimize a given objective.
+
+![alt text](images/roc.png)
+
+We will assume the test set contained a similar proportion of individuals who did and did not vote as the training set and selected a cutoff value that led to a ratio of positive and negative cases of approximately 2:1. This threshold is 0.61 and leads to classification of 26,932 observations in the test set as people who are likely to vote and 12,578 as those who are unlikely to vote. Using this threshold gives a TPR of about 0.77 and a FPR of about 0.47.
 
 , and in our [final analysis](who-voted_final.ipynb) investigated important features that determined whether an individual was likely to vote or not.
 
