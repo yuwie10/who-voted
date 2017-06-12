@@ -132,20 +132,24 @@ Ranking the importance scores from our tree-based models and coefficient magnitu
 
 All four models predict the likelihood of being married as the most important variable for classification. From the logistic regression, we can interpret the coefficient as a 0.1 increase in the likelihood score of being married results in an increased probability of ~0.61 of voting on the logit scale, all other predictors being equal. Although the actual magnitude of effect of married is different in the final stacked classifier, we can get a sense that the likelihood of being married has a strong effect on the likelihood of voting.
 
-There is less ‘consensus’ amongst the four models as to the other predictors, although hs_only, children and days_reg generally ranked high. Let's plot married and these three variables grouped by whether the model predicted the individual is likely to vote or not.
+There is less 'consensus' amongst the four models as to the other predictors, although hs_only, children and days_reg generally ranked high. Let's plot married and these three variables grouped by whether the model predicted the individual is likely to vote or not.
 
 ![alt text](images/fig-married.png)
 ![alt text](images/fig-days_reg.png)
 ![alt text](images/fig-children.png)
 ![alt text](images/fig-hs_only.png)
 
-We can see that there is a shift in the distribution of these predictors depending on whether the individuals were predicted to vote or not. The final stacked model predicts that individuals with higher marriage likelihood scores are more likely to vote than not vote, as the number of days since registration increases, the proportion of those who are unlikely to vote increases, a very low and a very high likelihood score of having children are associated with an increased likelihood of voting and those who are likely to vote are overrepresented in the low hs_only score range. Note that in the plots above, the 'Y' group is plotted in blue and the 'N' group is plotted in green, in contrast to the other plots.
+We can see that there is a shift in the distribution of these predictors depending on whether the individuals were predicted to vote or not (note that in the plots above, the 'Y' group is plotted in blue and the 'N' group is plotted in green, in contrast to the other plots). The final stacked model predicts that:
+* individuals with higher marriage likelihood scores are more likely to vote than not vote
+* as the number of days since registration increases, the proportion of those who are unlikely to vote increases
+* a very low and a very high likelihood score of having children are associated with an increased likelihood of voting
+* those who are likely to vote are overrepresented in the low hs_only score range; in other words, a low likelihood of only having a high school degree corresponds to a high likelihood of voting
 
 In addition to the features described above, state_house was ranked as the second most important feature from one of the random forest classifiers and also had a large coefficient magnitude in logistic regression. Investigating this feature we can see that certain state house districts are predicted to have relatively low voter turnout.
 
 ![alt text](images/sh-low-turnout.png)
 
-There are 11 state house districts where voter turnout is predicted to be very low, particularly in districts 57, 65 and 62. Transformation of this high-cardinal variable to a continuous one likely helped the final model identify and use this information in making predictions.
+There are 11 state house districts where voter turnout is predicted to be very low, particularly in districts 57, 65 and 62.
 
 ## Final conclusions
 
