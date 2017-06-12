@@ -99,15 +99,16 @@ def plot_quant(df, col, col_response = 'voted_pred'):
     fig, _ = plt.subplots()
     fig.set_size_inches(9, 9);
 
-    _ = plt.hist(df.ix[df[col_response] == 'Y'][col],
+    f = plt.hist(df.ix[df[col_response] == 'Y'][col],
                     bins = 50, label = 'Y')
-    _ = plt.hist(df.ix[df[col_response] == 'N'][col],
+    f = plt.hist(df.ix[df[col_response] == 'N'][col],
                     bins = 50, label = 'N')
     
-    _ = plt.legend();
-    _ = plt.title('Distribution of ' + col + ' by voters');
-    _ = plt.xlabel(col)
-    _ = plt.ylabel('Counts')
+    f = plt.legend();
+    f = plt.title('Distribution of ' + col + ' by voters');
+    f = plt.xlabel(col)
+    f = plt.ylabel('Counts')
+    return f
 
 
 
