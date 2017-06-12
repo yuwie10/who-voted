@@ -74,7 +74,7 @@ The ratio of those who did and did not vote in each category of our categorical 
 
 ![alt text](images/figure_state_house.png)
 
-We next explored the [predictor variables](who-voted_features.ipynb) that could potentially be useful for predicting voter turnout by training a naive random forest classifier with observations containing no missing values and examining which features the classifier used to split the data.
+In the next [notebook](who-voted_features.ipynb) we explored features that could potentially be useful for predicting voter turnout by training a naive random forest classifier with observations containing no missing values and examining which features the classifier used to split the data.
 
 features           |  importance
 -------------------|------------
