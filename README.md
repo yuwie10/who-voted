@@ -101,7 +101,7 @@ Based on these results, it seemed distance from ballot drop off location and pol
 
 To predict voter turnout, we next fit a variety of classifiers in [this notebook](who-voted_modeling.ipynb). Our initial models were logistic regression with L2 regularization and random forests with different tuned hyperparameters, followed by gradient boosted trees, which led to the largest drop in log-loss. To get a sense of what kind of predictions each fitted model was making, we can plot the distribution of the predicted probabilities of the different random forests, logistic regression and boosted tree models.
 
-![alt text](distributions.png)
+![alt text](images/distributions.png)
 
 Although the predictions of all four models are similar overall, there are probability ranges where the models perform differently. For example, logistic regression makes the most extreme predictions, likely contributing to its poor performance. To overcome the weaknesses of any individual model, ensemble models, where the final prediction is a weighted average or vote of each classifier, and stacking, which takes the probability predictions from individually tuned models and using these probabilities as a training set for a meta-classifier to produce final predictions, can be tested. Of the two methods, stacking led to the best final predictions on this dataset. I finished 5th out of 40 teams (100 students total).
 
@@ -120,11 +120,33 @@ The largest drop in log-loss was when we moved from a random forest to a gradien
 ## Who turns out to vote and who stays in on election day?
 ### Model interpretation
 
-Ultimately the goal of this project is to predict, and potentially understand, whether a Colorado voter participated in the 2016 election. An important first step in achieving this goal is to decide on a probability threshold above which an observation will be scored as a positive case (will vote) and below which will be scored as a negative case (will not vote). Generally, domain knowledge and constraints need to be employed to determine the ideal threshold. For example, if the goal is to encourage as many voters as possible to participate in an election, then setting a higher threshold so that more people are classified as unlikely to vote may be appropriate, as these people can then be targeted for get-out-the-vote campaigns. On the other hand, in the real world there are always budget constraints, and therefore setting a lower threshold to target the individuals most ‘at risk’ of not voting may be a better use of limited resources. Plotting the true positive rate (TPR) vs. the false positive rate (FPR) on the test set to generate an ROC curve can help determine a threshold to optimize a given objective.
+Ultimately the goal of this project is to predict, and potentially understand, whether a Colorado voter participated in the 2016 election (see [this notebook](who-voted_final.ipynb)). An important first step in achieving this goal is to decide on a probability threshold above which an observation will be scored as a positive case (will vote) and below which will be scored as a negative case (will not vote). Generally, domain knowledge and constraints need to be employed to determine the ideal threshold. For example, if the goal is to encourage as many voters as possible to participate in an election, then setting a higher threshold so that more people are classified as unlikely to vote may be appropriate, as these people can then be targeted for get-out-the-vote campaigns. On the other hand, in the real world there are always budget constraints, and therefore setting a lower threshold to target the individuals most ‘at risk’ of not voting may be a better use of limited resources. Plotting the true positive rate (TPR) vs. the false positive rate (FPR) on the test set to generate an ROC curve can help determine a threshold to optimize a given objective.
 
 ![alt text](images/roc.png)
 
 We will assume the test set contained a similar proportion of individuals who did and did not vote as the training set and selected a cutoff value that led to a ratio of positive and negative cases of approximately 2:1. This threshold is 0.61 and leads to classification of 26,932 observations in the test set as people who are likely to vote and 12,578 as those who are unlikely to vote. Using this threshold gives a TPR of about 0.77 and a FPR of about 0.47.
 
-, and in our [final analysis](who-voted_final.ipynb) investigated important features that determined whether an individual was likely to vote or not.
+Ranking the importance scores from our tree-based models and coefficient magnitudes from the logistic regression results in the following plot:
 
+![alt text](images/important-features.png)
+
+All four models predict the likelihood of being married as the most important variable for classification. From the logistic regression, we can interpret the coefficient as a 0.1 increase in the likelihood score of being married results in an increased probability of ~0.61 of voting on the logit scale, all other predictors being equal. Although the actual magnitude of effect of married is different in the final stacked classifier, we can get a sense that the likelihood of being married has a strong effect on the likelihood of voting.
+
+There is less ‘consensus’ amongst the four models as to the other predictors, although hs_only, children and days_reg generally ranked high. Let's plot married and these three variables grouped by whether the model predicted the individual is likely to vote or not.
+
+![alt text](images/fig-married.png)
+![alt text](images/fig-days_reg.png)
+![alt text](images/fig-children.png)
+![alt text](images/fig-hs_only.png)
+
+We can see that there is a shift in the distribution of these predictors depending on whether the individuals were predicted to vote or not. The final stacked model predicts that individuals with higher marriage likelihood scores are more likely to vote than not vote, as the number of days since registration increases, the proportion of those who are unlikely to vote increases, a very low and a very high likelihood score of having children are associated with an increased likelihood of voting and those who are likely to vote are overrepresented in the low hs_only score range. Note that in the plots above, the 'Y' group is plotted in blue and the 'N' group is plotted in green, in contrast to the other plots.
+
+In addition to the features described above, state_house was ranked as the second most important feature from one of the random forest classifiers and also had a large coefficient magnitude in logistic regression. Investigating this feature we can see that certain state house districts are predicted to have relatively low voter turnout.
+
+![alt text](images/sh-low-turnout.png)
+
+There are 11 state house districts where voter turnout is predicted to be very low, particularly in districts 57, 65 and 62. Transformation of this high-cardinal variable to a continuous one likely helped the final model identify and use this information in making predictions.
+
+## Final conclusions
+
+In summary, the final model predicts that a Colorado voter with a low likelihood of being married, a longer period since voter registration, a moderately low likelihood of having children, a higher likelihood score of only have a high school degree and who lived in certain state house districts were the least likely to vote in the 2016 election. Individuals that fall within one or several of these categories could be targeted for voter turnout campaigns in future elections. Importantly, analysis of variables in this notebook was based off a particular threshold, and these could change depending on the threshold for predicting whether an individual will or will not vote. Another caveat to keep in mind is that there is an assumption that voter turnout and the variables driving it are similar from year to year. However, it is possible that 2016 was an atypical year, therefore analysis of data from other election cycles should also be performed to determine how representative voter turnout in 2016 is of general elections. Combined with research on what techniques can convince people to vote (calling, door-to-door visits, etc.), understanding which individuals are likely or unlikely to vote could potentially increase voter participation in the future.
