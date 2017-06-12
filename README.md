@@ -57,16 +57,45 @@ N      |  28   |  2.26         |  2.42       |  21.7     |  23.7     |  27.4    
 Y      |  32   |  2.28         |  2.45       |  17.3     |  46.0     |  27.5      |  12.0  |  15.0   |  39.2       |  31.4         |  441
 
 Age and hs_only also differ the most in terms of the median, further suggesting these may be important predictors. Next we can look at the correlations between our variables:
-
 ![alt text](images/heatmap.png)
 
 The correlation matrix shows expected correlations, e.g., dist_poll and dist_ballot are highly correlated, as are age and likelihood of being married, while likelihood of being non-Christian is anti-correlated with likelihood of being some form of Christian. Most other pair-wise correlations appear relatively weak.
 
-To investigate the relationship between the likelihood of voting and our categorical variables, we can plot the proportion of individuals in each category who did and did not vote.
+To investigate the relationship between the likelihood of voting and our categorical variables (congressional district, gender, party, race and state house district), we can plot the proportion of individuals in each category who did and did not vote.
 
+![alt text](images/figure_congress_district.png)
+![alt text](images/figure_gender.png)
+![alt text](images/figure_party.png)
+![alt text](images/figure_race.png)
 
+The ratio of those who did and did not vote in each category of our categorical variables are generally between 3:1 and 2:1. For example, ~72% of women and ~64% of men voted in Colorado in 2016, thus the likelihood of an individual voting given their gender alone is similar. There are too many state house districts to plot each individually, but there are some state house districts where the proportion of citizens who did and did not vote differed (see below):
 
-We next explored the [predictor variables](who-voted_features.ipynb) that could potentially be useful for the prediction task.
+![alt text](images/fig1.png)
 
-We next fit [models](who-voted_modeling.ipynb) to predict voter turnout, and in our [final analysis](who-voted_final.ipynb) investigated important features that determined whether an individual was likely to vote or not.
+We next explored the [predictor variables](who-voted_features.ipynb) that could potentially be useful for predicting voter turnout by training a naive random forest classifier with observations containing no missing values and examining which features the classifier used to split the data.
+
+features           |  importance
+-------------------|------------
+dist_ballot        |  0.0756
+children           |  0.07282
+state_house        |  0.06987
+congress_district  |  0.06753
+dist_poll          |  0.06684
+age                |  0.06652
+race               |  0.06569
+party              |  0.06559
+married            |  0.0649
+hs_only            |  0.06433
+gender             |  0.05802
+cath               |  0.0132
+other_chrst        |  0.00662
+days_reg           |  0.0066
+non_chrst          |  0.00574
+evang              |  1e-05
+
+Based on these results, it seemed distance from ballot drop off location and polling place had good predictive power, and we therefore attempted multiple imputation by chained equations ([MICE](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3074241/)) [here](who-voted_impute.ipynb), though as already noted in our final model simply removing these variables resulted in better predictions than the imputed data. Removing the least important features in the table above did not result in an improved cross-validation log-loss score by the naive random forest.
+
+We next fit a variety of [classifers](who-voted_modeling.ipynb) to predict voter turnout. 
+
+, and in our [final analysis](who-voted_final.ipynb) investigated important features that determined whether an individual was likely to vote or not.
 
