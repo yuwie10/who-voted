@@ -56,7 +56,15 @@ voted  |  age  |  dist_ballot  |  dist_poll  |  hs_only  |  married  |  children
 N      |  28   |  2.26         |  2.42       |  21.7     |  23.7     |  27.4      |  11.0  |  15.3   |  40.8       |  31.0         |  466
 Y      |  32   |  2.28         |  2.45       |  17.3     |  46.0     |  27.5      |  12.0  |  15.0   |  39.2       |  31.4         |  441
 
-Age and hs_only also differ the most in terms of the median, further suggesting these may be important predictors.
+Age and hs_only also differ the most in terms of the median, further suggesting these may be important predictors. Next we can look at the correlations between our variables:
+
+![alt text](images/heatmap.png)
+
+The correlation matrix shows expected correlations, e.g., dist_poll and dist_ballot are highly correlated, as are age and likelihood of being married, while likelihood of being non-Christian is anti-correlated with likelihood of being some form of Christian. Most other pair-wise correlations appear relatively weak.
+
+To investigate the relationship between the likelihood of voting and our categorical variables, we can plot the proportion of individuals in each category who did and did not vote.
+
+
 
 We next explored the [predictor variables](who-voted_features.ipynb) that could potentially be useful for the prediction task.
 
