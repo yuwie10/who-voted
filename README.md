@@ -95,7 +95,7 @@ evang              |  1e-05
 
 Based on these results, it seemed distance from ballot drop off location and polling place had good predictive power, and we therefore attempted multiple imputation by chained equations ([MICE](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3074241/)) [here](who-voted_impute.ipynb), though as already noted in our final model simply removing these variables resulted in better predictions than the imputed data. Removing the least important features in the table above did not result in an improved cross-validation log-loss score by the naive random forest.
 
-We next fit a variety of [classifers](who-voted_modeling.ipynb) to predict voter turnout. 
+We next fit a variety of classifiers in [this notebook](who-voted_modeling.ipynb) to predict voter turnout. 
 
 , and in our [final analysis](who-voted_final.ipynb) investigated important features that determined whether an individual was likely to vote or not.
 
