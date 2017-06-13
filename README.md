@@ -8,7 +8,7 @@ The goal of this project is to use the modeling methods in Statistics 149 (and p
 Based on our analysis of the data, individuals who fall into the following categories are more likely to vote:
 * Individuals that are more likely to be married are _more_ likely to vote
 * A very low and a very high likelihood of having children are _more_ likely to vote
-* Those who are _more_ likely to vote are overrepresented in the low hs_only score range; in other words, a low likelihood of only having a high school degree corresponds to a high likelihood of voting
+* Those who are _more_ likely to vote have a low likelihood of only having a high school degree
 
 Individuals in the following categories are less likely to vote and could therefore be targeted for voter turnout campaigns:
 * As the number of days since registration increases, an individual becomes _less_ likely to vote
