@@ -126,6 +126,7 @@ The largest drop in log-loss was when we moved from a random forest to a gradien
 * With such a large proportion of missing data in the dist_ballot and dist_poll variables, it would have been better to simply remove them from the dataset than to attempt imputation
 * Imputation may have been better for the uncoded/unknown categories in race and gender, as a much smaller proportion of these variables were missing
 * Fitting a generalized additive model (GAM) would have been a superior approach compared to logistic regression, as the former could have captured complex non-linear relationships in the voter data
+* Cross-validation should ideally be performed with different random seeds to prevent overfitting
 
 ## Who turns out to vote and who stays in on election day?
 ### Model interpretation
